@@ -12,7 +12,7 @@ export default function TicketButton({
   onClick,
 }: TicketButtonProps) {
   const baseStyles =
-    "aspect-square flex items-center justify-center rounded-xl text-xs sm:text-sm font-mono font-bold transition-all duration-300 relative overflow-hidden select-none focus:outline-none";
+    "w-full aspect-square min-h-[44px] sm:min-h-[38px] flex items-center justify-center rounded-xl text-xs sm:text-sm font-mono font-bold transition-all duration-300 relative overflow-hidden select-none focus:outline-none";
 
   const states = {
     available:
