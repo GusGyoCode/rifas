@@ -133,7 +133,7 @@ export default function TicketGrid({
             <p className="text-sm font-medium">No se encontraron números disponibles</p>
           </div>
         ) : (
-          <div className="grid grid-cols-10 gap-1.5 md:gap-2 max-h-[360px] overflow-y-auto pr-1">
+          <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5 md:gap-2 max-h-[360px] overflow-y-auto pr-1">
             {filteredNumbers.map((num) => (
               <TicketButton
                 key={num}
