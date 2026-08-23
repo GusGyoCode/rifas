@@ -11,7 +11,6 @@ import PrizeModal from "../components/organisms/PrizeModal";
 import TermsModal from "../components/organisms/TermsModal";
 import PrivacyModal from "../components/organisms/PrivacyModal";
 import {
-  inicializarBoletosSiNoExisten,
   suscribirBoletos,
   registrarCompra,
 } from "../lib/firebaseService";
@@ -71,10 +70,8 @@ export default function Home() {
     fetchBcvRate();
   }, []);
 
-  // Inicializar 200 boletos y suscribirnos en tiempo real
+  // Suscribirnos a los boletos en tiempo real
   React.useEffect(() => {
-    inicializarBoletosSiNoExisten();
-
     const unsubscribe = suscribirBoletos((boletos) => {
       const sold: string[] = [];
       const reserved: string[] = [];

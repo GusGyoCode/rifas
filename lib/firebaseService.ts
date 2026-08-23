@@ -1,8 +1,6 @@
 import {
   collection,
   doc,
-  getDocs,
-  writeBatch,
   onSnapshot,
   runTransaction,
   serverTimestamp,
@@ -43,38 +41,6 @@ export interface Boleto {
   pagoId: string | null;
   updatedAt?: FieldValue;
 }
-
-/**
- * Inicializa los 200 boletos en la base de datos Firestore
- * si es que aún no se han creado (del 000 al 199).
- */
-export const inicializarBoletosSiNoExisten = async (): Promise<void> => {
-  try {
-    const boletosColRef = collection(db, "boletos");
-    const snapshot = await getDocs(boletosColRef);
-
-    if (snapshot.empty) {
-      console.log("Inicializando colección de 200 boletos en Firestore...");
-      const batch = writeBatch(db);
-
-      for (let i = 0; i < 200; i++) {
-        const numStr = String(i).padStart(3, "0");
-        const docRef = doc(db, "boletos", numStr);
-        batch.set(docRef, {
-          estado: "disponible",
-          compradorId: null,
-          pagoId: null,
-          updatedAt: serverTimestamp(),
-        });
-      }
-
-      await batch.commit();
-      console.log("Inicialización exitosa.");
-    }
-  } catch (error) {
-    console.error("Error al inicializar la colección de boletos:", error);
-  }
-};
 
 /**
  * Suscribe a los cambios de la colección de boletos en tiempo real.
