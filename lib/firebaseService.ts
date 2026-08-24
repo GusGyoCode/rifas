@@ -1,6 +1,8 @@
 import {
   collection,
   doc,
+  getDocs,
+  writeBatch,
   onSnapshot,
   runTransaction,
   serverTimestamp,
@@ -220,5 +222,78 @@ export const enviarNotificacionTelegram = async (
     }
   } catch (err) {
     console.error("Error al conectar con la API de Telegram:", err);
+  }
+};
+
+/**
+ * Cruza los datos de pagos registrados contra el estado actual de los boletos.
+ * Si algún boleto que fue pagado/reservado figura como "disponible" (por un reset accidental),
+ * lo repara atómicamente asignándole su respectivo estado, compradorId y pagoId.
+ */
+export const verificarYRepararBoletos = async (): Promise<void> => {
+  try {
+    console.log("Iniciando verificación de consistencia en base de datos...");
+    
+    // 1. Obtener todos los pagos registrados
+    const pagosColRef = collection(db, "pagos");
+    const pagosSnapshot = await getDocs(pagosColRef);
+    
+    if (pagosSnapshot.empty) {
+      console.log("No se encontraron pagos registrados para auditar.");
+      return;
+    }
+
+    // 2. Obtener todos los boletos actuales
+    const boletosColRef = collection(db, "boletos");
+    const boletosSnapshot = await getDocs(boletosColRef);
+    
+    const boletosMap: Record<string, Boleto> = {};
+    boletosSnapshot.forEach((doc) => {
+      boletosMap[doc.id] = doc.data() as Boleto;
+    });
+
+    const batch = writeBatch(db);
+    let necesitaReparacion = false;
+
+    // 3. Auditar pagos contra boletos
+    pagosSnapshot.forEach((pagoDoc) => {
+      const pago = pagoDoc.data() as Pago;
+      const pagoId = pagoDoc.id;
+
+      // Ignorar pagos rechazados en la reparación
+      if (pago.estado === "rechazado") return;
+
+      const estadoDeseado = pago.estado === "aprobado" ? "vendido" : "reservado";
+
+      pago.boletos.forEach((num) => {
+        const boletoActual = boletosMap[num];
+
+        // Reparamos si el boleto figura disponible o si está desasociado del pago actual
+        if (
+          !boletoActual ||
+          boletoActual.estado === "disponible" ||
+          (boletoActual.pagoId !== pagoId && boletoActual.estado !== "vendido")
+        ) {
+          console.warn(`[Auto-Healing] Detectado desajuste en boleto #${num}. Reparando a estado '${estadoDeseado}' con comprador ${pago.compradorId}...`);
+          necesitaReparacion = true;
+          const boletoRef = doc(db, "boletos", num);
+          batch.set(boletoRef, {
+            estado: estadoDeseado,
+            compradorId: pago.compradorId,
+            pagoId: pagoId,
+            updatedAt: serverTimestamp(),
+          }, { merge: true });
+        }
+      });
+    });
+
+    if (necesitaReparacion) {
+      await batch.commit();
+      console.log("¡Reparación del inventario completada con éxito!");
+    } else {
+      console.log("Verificación finalizada. Toda la base de datos se encuentra consistente.");
+    }
+  } catch (error) {
+    console.error("Error durante la auditoría/reparación de consistencia:", error);
   }
 };

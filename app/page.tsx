@@ -13,6 +13,7 @@ import PrivacyModal from "../components/organisms/PrivacyModal";
 import {
   suscribirBoletos,
   registrarCompra,
+  verificarYRepararBoletos,
 } from "../lib/firebaseService";
 
 interface UserDetails {
@@ -50,7 +51,22 @@ export default function Home() {
   const [isPrizeModalOpen, setIsPrizeModalOpen] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   const receiptRef = React.useRef<HTMLDivElement>(null);
+
+  // Auditar consistencia y auto-reparar boletos si es necesario al iniciar la página
+  React.useEffect(() => {
+    const runAudit = async () => {
+      try {
+        await verificarYRepararBoletos();
+      } catch (error) {
+        console.error("Error al ejecutar la auditoría de boletos:", error);
+      } finally {
+        setInitializing(false);
+      }
+    };
+    runAudit();
+  }, []);
 
   React.useEffect(() => {
     const fetchBcvRate = async () => {
@@ -395,6 +411,28 @@ export default function Home() {
 
           </div>
 
+        </div>
+      </div>
+    );
+  }
+
+  if (initializing) {
+    return (
+      <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-4 text-center">
+          {/* Spinner premium dorado */}
+          <div className="relative w-16 h-16 flex items-center justify-center animate-spin duration-[1.5s]">
+            <div className="absolute inset-0 rounded-full border-4 border-zinc-900" />
+            <div className="absolute inset-0 rounded-full border-4 border-t-amber-500 border-r-amber-500/30 border-b-transparent border-l-transparent" />
+          </div>
+          <div className="flex flex-col gap-1 mt-2">
+            <h3 className="font-mono font-black text-xs tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-350 uppercase">
+              RIFAS FACILITO
+            </h3>
+            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest animate-pulse">
+              Cargando boletos...
+            </p>
+          </div>
         </div>
       </div>
     );
