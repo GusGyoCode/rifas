@@ -118,7 +118,7 @@ export default function Home() {
   const handleSelectRandom = (count: number) => {
     // Generar lista de números disponibles de los 200 boletos
     const available = Array.from({ length: 200 }, (_, i) =>
-      String(i).padStart(3, "0")
+      String(i + 1).padStart(3, "0")
     ).filter((num) => !soldNumbers.includes(num) && !selectedNumbers.includes(num));
 
     if (available.length === 0) return;

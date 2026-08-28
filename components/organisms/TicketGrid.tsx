@@ -28,7 +28,7 @@ export default function TicketGrid({
 
   // Generar números dinámicamente según la cantidad total
   const allNumbers = Array.from({ length: totalTickets }, (_, i) =>
-    String(i).padStart(padLength, "0")
+    String(i + 1).padStart(padLength, "0")
   );
 
   const getStatus = (num: string): "available" | "selected" | "sold" => {
