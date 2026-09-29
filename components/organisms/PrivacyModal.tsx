@@ -94,7 +94,7 @@ export default function PrivacyModal({ isOpen, onClose }: PrivacyModalProps) {
               <span>🗑️</span> 4. Conservación de la Información
             </h4>
             <p>
-              Los datos personales recopilados para este sorteo se conservarán únicamente durante la vigencia de la rifa. Una vez realizado el sorteo el 3 de octubre de 2026, verificado el pago y entregado el premio, **toda la base de datos de compradores e imágenes de comprobantes será eliminada permanentemente** para salvaguardar la privacidad de todos los participantes.
+              Los datos personales recopilados para este sorteo se conservarán únicamente durante la vigencia de la rifa. Una vez realizado el sorteo el 3 de noviembre de 2026, verificado el pago y entregado el premio, **toda la base de datos de compradores e imágenes de comprobantes será eliminada permanentemente** para salvaguardar la privacidad de todos los participantes.
             </p>
           </div>
 

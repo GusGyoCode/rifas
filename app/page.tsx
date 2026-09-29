@@ -448,9 +448,9 @@ export default function Home() {
             description="Hoy nos unimos como familia para superar un momento difícil e imprevisto. Organizamos esta rifa con el objetivo de recaudar fondos destinados a cubrir honorarios legales y gastos derivados de una situación que estamos enfrentando juntos. Agradecemos de corazón cada aporte, mensaje de aliento y apoyo para compartir esta iniciativa."
             prizeName="Una Vaca de Finca (Novilla)"
             pricePerTicket={10.00}
-            drawDate="Sábado, 3 de Octubre de 2026"
+            drawDate="Martes, 3 de Noviembre de 2026"
             drawMethod="Transmisión en vivo vía TikTok"
-            targetDate="2026-10-03T20:00:00-04:00"
+            targetDate="2026-11-03T20:00:00-04:00"
             priceNote="A tasa BCV"
             soldCount={soldNumbers.length + reservedNumbers.length}
             totalCount={200}
